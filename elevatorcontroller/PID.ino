@@ -1,6 +1,6 @@
 // PID controller
-double Kp = 0.8;
-double Kd = 0.5;
+double Kp = 0.6;
+
 
 // initialize values for the PID controller
 unsigned long curTime, prevtime;
@@ -15,7 +15,7 @@ double computePID(double input) {
   error = setPoint - input;
   cumulError += error * elapsedTime;
   rateError = (error - lastError) / elapsedTime;
-  double out = Kp * error + Kd * rateError;
+  double out = Kp * error ;
   lastError = error;
   prevtime = curTime;
   // if statement checks if the output is within target range 20-150 which controls the pwm_signal
@@ -30,7 +30,7 @@ double computePID(double input) {
 // function to see the PD controller using the serial plotter 
 void PIDplot() {
   Serial.print("input:");
-  Serial.print(abs(dist) * rotation);
+  Serial.print(abs(dist * (rotation/7)));
   Serial.print(",");
   Serial.print("Output:");
   Serial.println(counter);

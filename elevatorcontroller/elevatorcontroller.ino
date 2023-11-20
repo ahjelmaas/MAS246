@@ -1,7 +1,7 @@
 
 #include <LiquidCrystal.h>
 #include <dac.h>
-#define rotation 2110
+#define rotation 15020 // max rotations, distance from floor 0 to floor 7
 
 
 int sw[8] = {0};

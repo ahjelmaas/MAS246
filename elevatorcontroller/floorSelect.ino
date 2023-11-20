@@ -1,3 +1,12 @@
+// Enumeration for elevator direction
+enum ElevatorDirection {
+  UP,
+  DOWN,
+  STOP
+};
+// Variable to store the current elevator direction
+ElevatorDirection elevatorDirection = STOP;
+
 void gotoFloor() {
   for (int i = 0; i < 8; i++) {
     if (digitalRead(sw[i]) == HIGH) {
@@ -10,10 +19,30 @@ void gotoFloor() {
         lcd.clear();
         return;
       }
-      dist = currentF - requestedF;
-      setPoint = abs(rotation * dist);
 
-      // closeDoor();
+      // Check if there are requests in the same direction
+      if ((elevatorDirection == UP && requestedF > currentF) ||
+          (elevatorDirection == DOWN && requestedF < currentF)) {
+        lcd.clear();
+        lcd.print("Cannot change direction");
+        delay(2000);
+        lcd.clear();
+        return;
+      }
+
+      dist = currentF - requestedF;
+      setPoint = abs(rotation/7 * dist);
+
+      // Check if the doors are closed before moving
+      if (doorState != CLOSED) {
+        lcd.clear();
+        lcd.print("Doors must be");
+        lcd.setCursor(0,1);
+        lcd.print("closed");
+        delay(2000);
+        lcd.clear();
+        return;
+      }
 
       if (dist < 0) {
         DCmotorCW();
@@ -44,7 +73,7 @@ void gotoFloor() {
 
 void moveElevator() {
   // Ensure counter is updated in this function
-  while (counter < rotation * abs(dist)) {
+  while (counter < rotation/7 * abs(dist)) {
     output = computePID(counter);
     delay(10); // A delay to ensure the microcontroller can read the signals
 
@@ -66,9 +95,29 @@ void respondToBatSignal() {
   if (simulatedFloor >= 0 && simulatedFloor <= 7) {
     requestedF = simulatedFloor;
     dist = currentF - requestedF;
-    setPoint = abs(rotation * dist);
+    setPoint = abs(rotation/7 * dist);
 
-    // closeDoor();
+    // Check if there are requests in the same direction
+      if ((elevatorDirection == UP && requestedF > currentF) ||
+          (elevatorDirection == DOWN && requestedF < currentF)) {
+        lcd.clear();
+        lcd.print("Cannot change direction");
+        delay(2000);
+        lcd.clear();
+        return;
+      }
+
+    // Check if the doors are closed before moving
+      if (doorState != CLOSED) {
+        lcd.clear();
+        lcd.print("Doors must be");
+        lcd.setCursor(0,1);
+        lcd.print("closed");
+        delay(2000);
+        lcd.clear();
+        return;
+      }
+
 
     if (dist < 0 && currentF > 0) {
       // Move DOWN if not on floor 0
@@ -106,7 +155,7 @@ void upOrDown() {
   int simulatedFloor = map(sensorValue, 0, 1023, 0, 7);
 
   if (joystickValue > 900) {
-    if(simulatedFloor == 7){
+    if(simulatedFloor == 7){ //disables up button for 7th floor
       return;
     }
     respondToBatSignal();
@@ -114,6 +163,9 @@ void upOrDown() {
     
   }
   if (joystickValue < 100) {
+    if(simulatedFloor == 0){ // disables down button for 0th floor
+      return;
+    }
     respondToBatSignal();
     //restruct next elevator movement to move DOWN
     
