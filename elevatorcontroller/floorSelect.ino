@@ -8,10 +8,11 @@ enum ElevatorDirection {
 ElevatorDirection elevatorDirection = STOP;
 
 void gotoFloor() {
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 8; i++) { //
     if (digitalRead(sw[i]) == HIGH) {
       requestedF = i;
-      
+
+      // Checks if the elevator is currently on the requested floor
       if(requestedF == currentF){
         lcd.clear();
         lcd.print("Already on Floor");
@@ -55,7 +56,7 @@ void gotoFloor() {
       lcd.clear();
       lcd.print("Opening Doors");
       openDoor();
-      delay(5000);
+      delay(5000); // delay for closing doors
       lcd.clear();
       lcd.print("Closing Doors");
       closeDoor();
@@ -72,8 +73,8 @@ void gotoFloor() {
 }
 
 void moveElevator() {
-  // Ensure counter is updated in this function
-  while (counter < rotation/7 * abs(dist)) {
+  
+  while (counter < rotation/7 * abs(dist)) { //change the number rotation is divided by to equal number of floors -1
     output = computePID(counter);
     delay(10); // A delay to ensure the microcontroller can read the signals
 
@@ -90,12 +91,12 @@ void respondToBatSignal() {
   int sensorValue = analogRead(callLift);
 
   // Map the sensor value to a floor index
-  int simulatedFloor = map(sensorValue, 0, 1023, 0, 7);
+  int simulatedFloor = map(sensorValue, 0, 1023, 0, 7); //change 7 to be equal to number of buttons -1
 
-  if (simulatedFloor >= 0 && simulatedFloor <= 7) {
+  if (simulatedFloor >= 0 && simulatedFloor <= 7) { //change <= 7 to be equal to top floor
     requestedF = simulatedFloor;
     dist = currentF - requestedF;
-    setPoint = abs(rotation/7 * dist);
+    setPoint = abs(rotation/7 * dist); //change the number rotation is divided by to equal number of floors -1
 
     // Check if there are requests in the same direction
       if ((elevatorDirection == UP && requestedF > currentF) ||
@@ -122,7 +123,7 @@ void respondToBatSignal() {
     if (dist < 0 && currentF > 0) {
       // Move DOWN if not on floor 0
       DCmotorCW();
-    } else if (dist > 0 && currentF < 7) {
+    } else if (dist > 0 && currentF < 7) {// change <7 to be equal to top floor
       // Move UP if not on floor 7
       DCmotorCCW();
     }
@@ -132,7 +133,7 @@ void respondToBatSignal() {
     lcd.clear();
     lcd.print("Opening Doors");
     openDoor();
-    delay(5000);
+    delay(5000); // delay for closing doors
     lcd.clear();
     lcd.print("Closing Doors");
     closeDoor();
@@ -152,10 +153,10 @@ void upOrDown() {
   int sensorValue = analogRead(callLift);
 
   // Map the sensor value to a floor index
-  int simulatedFloor = map(sensorValue, 0, 1023, 0, 7);
+  int simulatedFloor = map(sensorValue, 0, 1023, 0, 7); //change 7 to be equal to number of buttons -1
 
   if (joystickValue > 900) {
-    if(simulatedFloor == 7){ //disables up button for 7th floor
+    if(simulatedFloor == 7){ //disables up button for 7th floor, change as needed for top floor
       return;
     }
     respondToBatSignal();

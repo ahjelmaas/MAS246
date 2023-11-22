@@ -4,7 +4,8 @@
 #define rotation 15020 // max rotations, distance from floor 0 to floor 7
 
 
-int sw[8] = {0};
+
+int sw[8] = {0}; //change the size of this array to match number of buttons in the elevator cabin
 
 // initializing analog sensors
 const int VERT = A2; // analog
@@ -50,7 +51,7 @@ void setup() {
   set_dac(4095,4095);
 
   // makes an array for the switches
-  for(int i=0; i<8; i++)
+  for(int i=0; i<8; i++) //change the size of this array to match number of buttons in the elevator cabin
     sw[i] = 22+i;
 
   // Set DC motor pins to output
@@ -85,16 +86,5 @@ void loop() {
   upOrDown();
 
 
-  // vertical = analogRead(VERT);
-  // Serial.print("vertical: ");
-  // Serial.print(vertical, DEC);
- 
-  // floorCall();
-  // test();
-  // if statement checks which button pressed, moves to wanted floor
-  // CW for upward movement, CCW for downward movement
-  // only the first if statement is documented for explanation
- 
+
 }
-
-
